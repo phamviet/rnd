@@ -1,0 +1,40 @@
+authenticate_service_url: https://authenticate.localhost.pomerium.io
+
+idp_provider: oidc
+idp_client_id: 'mynewclient'
+idp_client_secret: 'N3CVVi6h5mZ2BiEg14wR2zTCHpFzMUur' # enter your client secret here
+idp_provider_url: 'https://organic-narwhal.pikapod.net/realms/Pomerium'
+
+certificate_file: '/data/certs/localhost.pomerium.io.crt'
+certificate_key_file: '/data/certs/localhost.pomerium.io.key'
+
+#log_level: debug
+
+jwt_claims_headers:
+  X-Email: email
+  X-Name: name
+  X-Username: user
+
+routes:
+  - from: https://httpbin.localhost.pomerium.io
+    to: http://httpbin
+    policy:
+      - allow:
+          or:
+            - email:
+                is: viet@webonyx.com
+    pass_identity_headers: true
+    preserve_host_header: true
+    set_request_headers:
+      x-pomerium-idp-id-token: ${pomerium.id_token}
+      x-pomerium-idp-access-token: ${pomerium.access_token}
+
+  - from: https://codeserver.localhost.pomerium.io
+    to: http://codeserver:8080
+    policy:
+      - allow:
+          or:
+            - email:
+                is: viet@webonyx.com
+    allow_websockets: true
+    preserve_host_header: true

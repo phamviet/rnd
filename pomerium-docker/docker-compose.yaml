@@ -1,0 +1,39 @@
+services:
+  pomerium:
+    image: pomerium/pomerium:v0.26.1
+    ports:
+      - 443:443
+    restart: always
+    environment:
+      XDG_CACHE_HOME: /var/cache
+    volumes:
+      - pomerium-cache:/var/cache
+      - ./certs:/data/certs:ro
+      - ./config.yaml:/pomerium/config.yaml:ro
+    networks:
+      main: {}
+
+  codeserver:
+    image: codercom/code-server:latest
+    networks:
+      main: {}
+    command: --auth none --disable-telemetry /home/coder
+    ports:
+      - 8080:8080
+    volumes:
+      - ./code-server:/home/coder/project
+      - ./code-server-config/.config:/home/coder/.config
+
+  httpbin:
+    image: kennethreitz/httpbin:latest
+    networks:
+      main:
+        aliases:
+          - httpbin
+
+
+networks:
+  main: {}
+
+volumes:
+  pomerium-cache:
