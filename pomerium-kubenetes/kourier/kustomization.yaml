@@ -1,0 +1,11 @@
+resources:
+  - https://github.com/knative/net-kourier/releases/download/knative-v1.14.0/kourier.yaml
+patches:
+  - patch: |-
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: kourier
+        namespace: kourier-system
+      spec:
+        type: ClusterIP

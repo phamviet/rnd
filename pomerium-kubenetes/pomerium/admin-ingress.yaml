@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: envoy
+spec:
+  ingressClassName: pomerium
+  rules:
+    - host: 'envoy.localhost.pomerium.io'
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: envoy
+                port:
+                  name: admin

@@ -1,0 +1,26 @@
+resources:
+#  - https://github.com/pomerium/ingress-controller/tree/v0.26.1/config/default/kustomization.yaml
+  - https://raw.githubusercontent.com/pomerium/ingress-controller/v0.26.1/deployment.yaml
+patches:
+  - patch: |-
+      apiVersion: v1
+      kind: Service
+      metadata:
+        name: pomerium-proxy
+        namespace: pomerium
+        annotations:
+          external-dns.alpha.kubernetes.io/hostname: 'authenticate.localhost.pomerium.io'
+  - patch: |-
+      apiVersion: networking.k8s.io/v1
+      kind: IngressClass
+      metadata:
+        name: pomerium
+        annotations:
+          ingressclass.kubernetes.io/is-default-class: 'true'
+  - patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: "--debug-admin-addr=localhost:9901"
+    target:
+      kind: Deployment
+      name: pomerium

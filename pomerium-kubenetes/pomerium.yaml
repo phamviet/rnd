@@ -1,0 +1,14 @@
+apiVersion: ingress.pomerium.io/v1
+kind: Pomerium
+metadata:
+  name: global
+spec:
+  secrets: pomerium/bootstrap
+  authenticate:
+    url: https://authenticate.localhost.pomerium.io
+  identityProvider:
+    provider: oidc
+    secret: pomerium/idp
+    url: https://organic-narwhal.pikapod.net/realms/Pomerium
+  certificates:
+    - pomerium/pomerium-wildcard-tls

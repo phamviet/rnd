@@ -1,0 +1,39 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: code-server
+  namespace: default
+spec:
+  template:
+    spec:
+      containers:
+        - args:
+          - --auth=none
+          - --disable-telemetry
+          - --trusted-origins
+          - "*"
+          - /home/coder/project
+          image: codercom/code-server:latest
+          name: ""
+          ports:
+          - containerPort: 8080
+          resources: {}
+          volumeMounts:
+          - mountPath: /home/coder/project
+            name: project
+      volumes:
+        - name: project
+          persistentVolumeClaim:
+            claimName: project-pv-claim
+            readOnly: false
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: project-pv-claim
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi

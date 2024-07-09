@@ -1,0 +1,29 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: codeserver
+  namespace: kourier-system
+  annotations:
+    ingress.pomerium.io/allowed_domains: |
+      - webonyx.com
+    ingress.pomerium.io/pass_identity_headers: 'true'
+    ingress.pomerium.io/allow_websockets: 'true'
+#    ingress.pomerium.io/preserve_host_header: 'true'
+    ingress.pomerium.io/timeout: '60s'
+    ingress.pomerium.io/host_rewrite: 'code-server.default.localhost.pomerium.io'
+    # Dangerous!!!
+    ingress.pomerium.io/set_request_headers: |
+      Origin: https://code-server.default.localhost.pomerium.io
+spec:
+  ingressClassName: pomerium
+  rules:
+    - host: 'code-server.localhost.pomerium.io'
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: kourier
+                port:
+                  number: 80
